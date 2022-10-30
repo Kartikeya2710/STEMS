@@ -1,0 +1,10 @@
+<additional>
+    <inductionLoop id="myLoop1" lane="E7_0" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop2" lane="E7_1" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop3" lane="-E10_0" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop4" lane="-E10_1" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop5" lane="-E8_0" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop6" lane="-E8_1" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop7" lane="-E9_0" pos="-10" period="300" freq="3" file="out.xml"/>
+    <inductionLoop id="myLoop8" lane="-E9_1" pos="-10" period="300" freq="3" file="out.xml"/>
+</additional>

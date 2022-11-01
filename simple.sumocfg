@@ -5,7 +5,6 @@
     <input>
         <net-file value="simple.net.xml"/>
         <route-files value="trips.trips.xml"/>
-        <additional-files value="induction_loop_E1.add.xml"/>
     </input>
 
     <time>

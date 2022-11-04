@@ -1,0 +1,26 @@
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <e3Detector id="e3_J10_-E10" freq="10" file="e3output.xml">
+        <detEntry lane="-E10_0" pos="-2"/>
+        <detEntry lane="-E10_1" pos="-2"/>
+        <detExit lane="-E10_0" pos="-1"/>
+        <detExit lane="-E10_1" pos="-1"/>
+    </e3Detector>
+    <e3Detector id="e3_J10_-E8" freq="10" file="e3output.xml">
+        <detEntry lane="-E8_0" pos="-2"/>
+        <detEntry lane="-E8_1" pos="-2"/>
+        <detExit lane="-E8_0" pos="-1"/>
+        <detExit lane="-E8_1" pos="-1"/>
+    </e3Detector>
+    <e3Detector id="e3_J10_-E9" freq="10" file="e3output.xml">
+        <detEntry lane="-E9_0" pos="-2"/>
+        <detEntry lane="-E9_1" pos="-2"/>
+        <detExit lane="-E9_0" pos="-1"/>
+        <detExit lane="-E9_1" pos="-1"/>
+    </e3Detector>
+    <e3Detector id="e3_J10_E7" freq="10" file="e3output.xml">
+        <detEntry lane="E7_0" pos="-2"/>
+        <detEntry lane="E7_1" pos="-2"/>
+        <detExit lane="E7_0" pos="-1"/>
+        <detExit lane="E7_1" pos="-1"/>
+    </e3Detector>
+</additional>

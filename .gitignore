@@ -130,3 +130,5 @@ dmypy.json
 
 # Custom
 FellowshipMonthEndPlan.txt
+e3output.xml
+/__pycache__

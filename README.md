@@ -3,6 +3,6 @@ STEMS (Smart Traffic Engagement and Management System) is aimed towards optimizi
 
 ### Traditional Traffic Light (TTL) Performance
 
-**Note:** Static NEMA Scheme has been used for TTL implementation. Please refer to `tls.xml` for duration and phase related information.
+**Note:** Static NEMA Scheme has been used for TTL implementation. Please refer to `ttl.xml` for duration and phase related information.
 
 <img src="TTL performance.PNG" alt="TTL performance" width="500" height="350"/>

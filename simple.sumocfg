@@ -5,7 +5,7 @@
     <input>
         <net-file value="simple.net.xml"/>
         <route-files value="trips.trips.xml"/>
-        <additional-files value="tls.xml, detectors.add.xml"/>
+        <additional-files value="detectors.add.xml"/>
     </input>
 
     <time>

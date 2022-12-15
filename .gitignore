@@ -132,3 +132,4 @@ dmypy.json
 FellowshipMonthEndPlan.txt
 e3output.xml
 /__pycache__
+/.vscode

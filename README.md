@@ -1,20 +1,28 @@
 # STEMS
 STEMS (Smart Traffic Engagement and Management System) is aimed towards optimizing traffic flow at intersections with the help of Reinforcement Learning
 
+### Generating random trips having custom vehicles
+```powershell
+$ python randomTrips.py -n simple.net.xml -o trips.trips.xml -r routes.rou.xml --additional-file vehicles.add.vtype.xml --fringe-factor 100 --trip-attributes="type=\"typedist1\"" -e 3600 --validate
+```
+
 ### Traditional Traffic Light (TTL) Performance
 
-**Note:** Static NEMA Scheme has been used for TTL implementation. Please refer to `simple.net.xml` for duration and phase related information.
+**Note:** Please refer to `simple.net.xml` for traffic signal duration and phase related information.
 
 <img src="TTL performance.PNG" alt="TTL performance" width="500" height="350"/>
 
-### Important
+
+### Implementation Details
 
 We changed the `TrafficSignal` implementation of `sumo_rl` to include a observation space consisting of the phase information and the pressure of the intersection. 
 
 We did this by redefining the `self.observation_space` and `self.discrete_observation_space` variables
 
-For the pressure, we did not know what will be maximum pressure, so, assuming the minimum vehicle length to be 1m, we can have a maximum
-of `self.lanes_lenght[i]` vehicles on `lane[i] `
+For the queue length metric, we did not know what will be maximum queue length.
+
+1. Pre-define an upper bound
+2. Assume the minimum vehicle length to be x meters (`self.MIN_VEH_LEN`) and the minimum gap between two vehicles to be y meters (`self.MIN_GAP`). In this case: `self.max_queue_length = int(max(self.lanes_lenght.values())) // (self.MIN_VEH_LEN + self.MIN_GAP)`
 
 ```python
 self.max_lane_length = int(max(self.lanes_lenght.values()))

@@ -1,90 +1,64 @@
-from os.path import exists
+import os
+import sys
+import gymnasium
+sys.modules["gym"] = gymnasium
+from stable_baselines3 import DQN
+from sumo_rl import TrafficSignal
+from stable_baselines3.common.callbacks import ProgressBarCallback
+
+if 'SUMO_HOME' in os.environ:
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
+else:
+    sys.exit("Please declare the environment variable 'SUMO_HOME'")
 from sumo_rl import SumoEnvironment
-from sumo_rl.agents import QLAgent
 
-import pickle
-import matplotlib.pyplot as plt
-from sumo_rl.exploration import EpsilonGreedy
+def my_reward_fn(traffic_signal):
+    return traffic_signal._queue_reward()
 
-def my_reward_fn(ts):
-    return ts._queue_reward()
+if __name__ == '__main__':
 
-env = SumoEnvironment(
-    net_file='simple.net.xml',
-    route_file='trips.trips.xml',
-    use_gui=True,
-    num_seconds=1000,
-    yellow_time=3,
-    min_green=5,
-    max_green=60,
-    reward_fn=my_reward_fn
-)
+    SEED = 42
+    NUM_SECONDS = 1_00_000
+    
+    # checkpoint_callback = CheckpointCallback(
+    #     save_freq = 1000,
+    #     save_path = "./saved_model",
+    #     name_prefix="PPO",
+    # )
 
-# agent = DQN(
-#         policy = "MlpPolicy",
-#         env = env,
-#         learning_rate=0.001,
-#         buffer_size=100,
-#         learning_starts = 1,
-#     )
+    env = SumoEnvironment(
+        net_file='simple.net.xml',
+        route_file='routes.rou.xml',
+        single_agent=True,
+        use_gui=True,
+        num_seconds=NUM_SECONDS,
+        # additional_sumo_cmd="-a detectors.add.xml",
+        reward_fn=my_reward_fn,
+        observation_fn='custom',
+        sumo_seed=SEED,
+        yellow_time=3,
+        min_green=5,
+        max_green=60
+    )
 
-episodes = 5
-
-out_csv = 'outputs/q_learning'
-
-rewards = []
-
-for episode in range(1, episodes + 1):
-
-    initial_states = env.reset()
-
-    if exists('model.pkl'):
-        ql_agents = pickle.load(open('model.pkl', 'rb'))
-    else:
-        ql_agents = {ts: QLAgent(
-            starting_state=env.encode(initial_states[ts], ts),
-            state_space=env.observation_space,
-            action_space=env.action_space,
-            exploration_strategy=EpsilonGreedy(initial_epsilon=0.5, min_epsilon=0.005, decay=0.9))
-            for ts in env.ts_ids
-        }
-
-    done = {'__all__': False}
-    infos = []
-    episode_reward = 0.0
-
-    while not done['__all__']:
-        actions = {ts: ql_agents[ts].act() for ts in ql_agents.keys()}
-        obs, reward, done, info = env.step(actions)
-        episode_reward += sum(list(reward.values()))
-
-        for agent_id in ql_agents.keys():
-            ql_agents[agent_id].learn(next_state=env.encode(
-                obs[agent_id], agent_id), reward=reward[agent_id])
-
-    if len(rewards) == 0 or episode_reward >= max(rewards):
-        pickle.dump(ql_agents, open('model.pkl', 'wb'))
-
-
-    rewards.append(episode_reward)
-
-plt.plot(rewards)
-plt.show()
-
-# for episode in range(1, episodes+1):
-#     done = False
-#     env.reset()
-
-
-#     # The junction here is just the junction name, example "J10"
-
-#     for junction in env.agent_iter():
-#         observation, reward, termination, truncation, info = env.last()
-#         done = termination or truncation
-
-#         if done:
-#             break
-#         action = randint(0, 1)
-#         env.step(action)
-
-env.close()
+    
+    model = DQN(
+        env=env,
+        policy="MlpPolicy",
+        learning_rate=0.001,
+        learning_starts=0,
+        train_freq=1,
+        target_update_interval=500,
+        exploration_initial_eps=0.05,
+        exploration_final_eps=0.01,
+        verbose=1,
+        tensorboard_log="./dqn_tensorboard/",
+        seed=SEED
+    )
+    
+    model.learn(
+        total_timesteps=NUM_SECONDS,
+        progress_bar=True,
+        log_interval=1
+    )

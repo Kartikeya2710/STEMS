@@ -147,14 +147,14 @@
         <lane id="E9_1" index="1" speed="13.89" length="489.60" shape="-1.60,10.40 -1.60,500.00"/>
     </edge>
     <tlLogic id="J10" type="static" programID="NEMA" offset="0">
-        <phase duration="30" state="grrrggGGrggrrrggGGrg"/>
-        <phase duration="3" state="gyyrggyyrggyyrggyyrg"/>
-        <phase duration="30" state="gGGrggrrrggGGrggrrrg"/>
-        <phase duration="3" state="gyyrggrryggyyrggrryg"/>
-        <phase duration="30" state="grrrggrrGggrrrggrrGg"/>
-        <phase duration="3" state="grryggrryggrryggrryg"/>
-        <phase duration="30" state="grrGggrrrggrrGggrrrg"/>
-        <phase duration="3" state="grryggyyrggrryggyyrg"/>
+        <phase duration="30" state="GGGGGrrrrrrrrrrrrrrr"/>
+        <phase duration="3" state="yyyyyyyyyyrrrrrrrrrr"/>
+        <phase duration="30" state="rrrrrGGGGGrrrrrrrrrr"/>
+        <phase duration="3" state="rrrrryyyyyyyyyyrrrrr"/>
+        <phase duration="30" state="rrrrrrrrrrGGGGGrrrrr"/>
+        <phase duration="3" state="rrrrrrrrrryyyyyyyyyy"/>
+        <phase duration="30" state="rrrrrrrrrrrrrrrGGGGG"/>
+        <phase duration="3" state="yyyyyrrrrrrrrrryyyyy"/>
     </tlLogic>
 
     <junction id="J10" type="traffic_light" x="0.00" y="0.00" incLanes="-E10_0 -E10_1 -E8_0 -E8_1 -E9_0 -E9_1 E7_0 E7_1" intLanes=":J10_0_0 :J10_1_0 :J10_1_1 :J10_20_0 :J10_21_0 :J10_5_0 :J10_6_0 :J10_6_1 :J10_22_0 :J10_23_0 :J10_10_0 :J10_11_0 :J10_11_1 :J10_24_0 :J10_25_0 :J10_15_0 :J10_16_0 :J10_16_1 :J10_26_0 :J10_27_0" shape="-6.40,-10.40 6.40,-10.40 6.84,-8.18 7.40,-7.40 8.18,-6.84 9.18,-6.51 10.40,-6.40 10.40,6.40 8.18,6.84 7.40,7.40 6.84,8.18 6.51,9.18 6.40,10.40 -6.40,10.40 -6.84,8.18 -7.40,7.40 -8.18,6.84 -9.18,6.51 -10.40,6.40 -10.40,-6.40 -8.18,-6.84 -7.40,-7.40 -6.84,-8.18 -6.51,-9.18">

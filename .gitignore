@@ -130,6 +130,8 @@ dmypy.json
 
 # Custom
 FellowshipMonthEndPlan.txt
+generateTLSE2Detectors.py
+randomTrips.py
 e3output.xml
 /__pycache__
 /.vscode

@@ -1,64 +1,62 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import os
-import sys
-import gymnasium
-sys.modules["gym"] = gymnasium
-from stable_baselines3 import DQN
-from sumo_rl import TrafficSignal
-from stable_baselines3.common.callbacks import ProgressBarCallback
+from shutil import copyfile
+from DQN.testing_simulation import Simulation
+from helper.generator import TrafficGenerator
+from DQN.Agent import Agent
+from helper.visualization import Visualization
+from helper.utils import *
 
-if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
-else:
-    sys.exit("Please declare the environment variable 'SUMO_HOME'")
-from sumo_rl import SumoEnvironment
+if __name__ == "__main__":
+    dir_config = load_config_file('dir_settings.yaml')
+    test_settings_path = os.path.join(dir_config['agent_dir'], 'test_settings.yaml')
 
-def my_reward_fn(traffic_signal):
-    return traffic_signal._queue_reward()
+    test_config = load_config_file(test_settings_path)
+    sumo_cmd = set_sumo(test_config['gui'], dir_config['intersection_dir'], dir_config['sumocfg_file_name'], test_config['max_steps'])
+    model_path, plot_path = set_test_path(dir_config['agent_dir'], dir_config['models_path_name'], dir_config['model_to_test'])
+    checkpoint_number = dir_config['checkpoint_number']
 
-if __name__ == '__main__':
+    # Load the pretrained model
 
-    SEED = 42
-    NUM_SECONDS = 1_00_000
-    
-    # checkpoint_callback = CheckpointCallback(
-    #     save_freq = 1000,
-    #     save_path = "./saved_model",
-    #     name_prefix="PPO",
-    # )
-
-    env = SumoEnvironment(
-        net_file='simple.net.xml',
-        route_file='routes.rou.xml',
-        single_agent=True,
-        use_gui=True,
-        num_seconds=NUM_SECONDS,
-        # additional_sumo_cmd="-a detectors.add.xml",
-        reward_fn=my_reward_fn,
-        observation_fn='custom',
-        sumo_seed=SEED,
-        yellow_time=3,
-        min_green=5,
-        max_green=60
-    )
-
-    
-    model = DQN(
-        env=env,
-        policy="MlpPolicy",
-        learning_rate=0.001,
-        learning_starts=0,
-        train_freq=1,
-        target_update_interval=500,
-        exploration_initial_eps=0.05,
-        exploration_final_eps=0.01,
-        verbose=1,
-        tensorboard_log="./dqn_tensorboard/",
-        seed=SEED
+    Model = Agent(
+        test_config['num_states'], 
+        test_config['num_actions'],
+        test_config['fc_dims']
     )
     
-    model.learn(
-        total_timesteps=NUM_SECONDS,
-        progress_bar=True,
-        log_interval=1
+    Model = Model.load_model(model_path, checkpoint_number, Model)
+        
+
+    TrafficGen = TrafficGenerator(
+        test_config,
+        dir_config
     )
+
+    Visualization = Visualization(
+        plot_path, 
+        dpi=96
+    )
+        
+    Simulation = Simulation(
+        Model,
+        TrafficGen,
+        sumo_cmd,
+        test_config['max_steps'],
+        test_config['green_duration'],
+        test_config['yellow_duration'],
+        test_config['num_states'],
+        test_config['num_actions']
+    )
+
+    print('\n----- Test episode')
+    simulation_time = Simulation.run(test_config['episode_seed'])  # run the simulation
+    print('Simulation time:', simulation_time, 's')
+
+    print("----- Testing info saved at:", plot_path)
+
+    copyfile(src=test_settings_path, dst=os.path.join(plot_path, 'test_settings.yaml'))
+
+    Visualization.save_data_and_plot(data=Simulation.reward_episode, filename='reward', xlabel='Action step', ylabel='Reward')
+    Visualization.save_data_and_plot(data=Simulation.queue_length_episode, filename='queue', xlabel='Step', ylabel='Queue lenght (vehicles)')

@@ -1,0 +1,11 @@
+files:
+  agent_dir: DQN
+  models_path_name: models
+
+  intersection_dir: ./intersection/indian
+  sumocfg_file_name: sumo_config.sumocfg
+  additional_file: vehicles.add.vtype.xml
+  trip_attributes: typedist1
+
+  model_to_test: 9
+  checkpoint_number: 330

@@ -1,0 +1,8 @@
+<additional>
+    <vTypeDistribution id="typedist1" >
+        <vType id="vTypeCar" vClass="passenger" guiShape="passenger" probability="0.2068"/>
+        <vType id="vTypeMotorcycle" vClass="motorcycle" guiShape="motorcycle" probability="0.7663"/>
+        <vType id="vTypeBus" vClass="bus" guiShape="bus" probability="0.007"/>
+        <vType id="vTypeTruck" vClass="trailer" guiShape="truck" probability="0.008"/>
+    </vTypeDistribution>
+</additional>

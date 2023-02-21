@@ -1,8 +1,0 @@
-<additional>
-    <vTypeDistribution id="typedist1" >
-        <vType id="vTypeCar" maxSpeed="35" vClass="passenger" length="4.5" guiShape="passenger" probability="0.6"/>
-        <vType id="vTypeMotorcycle" maxSpeed="35" vClass="motorcycle" Length="2" guiShape="motorcycle" probability="0.2"/>
-        <vType id="vTypeBus" maxSpeed="25" vClass="bus" Length="14.63" guiShape="bus" probability="0.1"/>
-        <vType id="vTypeEmergency" maxSpeed="40" vClass="emergency" Length="14.63" guiShape="emergency" probability="0.1"/>
-    </vTypeDistribution>
-</additional>

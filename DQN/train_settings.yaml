@@ -1,0 +1,22 @@
+simulation:
+    gui: False
+    total_episodes: 500
+    max_steps: 5400
+    n_cars_generated: 3000
+    green_duration: 10
+    yellow_duration: 4
+    save_every: 5
+
+model:
+    fc_dims: [400, 400, 400, 400]
+    batch_size: 32
+    learning_rate: 0.001
+    update_every: 500
+
+memory:
+    capacity: 50000
+
+agent:
+    num_states: 56
+    num_actions: 4
+    gamma: 0.75

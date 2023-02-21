@@ -1,0 +1,14 @@
+simulation:
+    gui: True
+    max_steps: 5400
+    n_cars_generated: 3000
+    episode_seed: 10000
+    green_duration: 10
+    yellow_duration: 3
+
+model:
+    fc_dims: [400, 400, 400, 400]
+
+agent:
+    num_states: 56
+    num_actions: 4

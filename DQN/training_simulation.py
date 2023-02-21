@@ -28,11 +28,9 @@ class Simulation:
         self._reward_store = []
         self._cumulative_wait_store = []
         self._avg_queue_length_store = []
+        self._avg_speed_store = []
 
     def run(self, episode, epsilon):
-        """
-        Starts a training session
-        """
         start_time = timeit.default_timer()
 
         # first, generate the route file for this simulation and set up sumo
@@ -53,6 +51,7 @@ class Simulation:
         self._sum_queue_length = 0
         self._sum_waiting_time = 0
         self._old_total_wait = 0
+        self._avg_speed = 0
 
         old_state = -1
         old_action = -1
@@ -88,6 +87,7 @@ class Simulation:
 
         self._save_episode_stats()
         print("Total reward:", self._sum_neg_reward, "- Epsilon:", round(epsilon, 3))
+
         traci.close()
 
         training_time = round(timeit.default_timer() - start_time, 1)
@@ -96,9 +96,6 @@ class Simulation:
 
 
     def _simulate(self, steps_todo):
-        """
-        Execute steps in sumo while gathering statistics
-        """
         if (self._step + steps_todo) >= self._max_steps:  # do not do more steps than the maximum allowed number of steps
             steps_todo = self._max_steps - self._step
 
@@ -109,11 +106,9 @@ class Simulation:
             queue_length = self._get_queue_length()
             self._sum_queue_length += queue_length
             self._sum_waiting_time += queue_length # 1 step while wating in queue means 1 second waited, for each car, therefore queue_length == waited_seconds
+            self._avg_speed += self._get_average_speed()
 
     def _collect_waiting_times(self):
-        """
-        Retrieve the waiting time of every car in the incoming roads
-        """
         car_list = traci.vehicle.getIDList()
         for car_id in car_list:
             wait_time = traci.vehicle.getAccumulatedWaitingTime(car_id)
@@ -127,23 +122,14 @@ class Simulation:
         return total_waiting_time
 
     def _choose_action(self, state, epsilon):
-        """
-        Decide whether to perform an explorative or exploitative action, according to an epsilon-greedy policy
-        """
         return self._Agent.act(state, epsilon)
 
     def _set_yellow_phase(self, old_action):
-        """
-        Activate the correct yellow light combination in sumo
-        """
         yellow_phase_code = old_action * 2 + 1 # obtain the yellow phase code, based on the old action (ref on environment.net.xml)
         traci.trafficlight.setPhase("TL", yellow_phase_code)
 
 
     def _set_green_phase(self, action_number):
-        """
-        Activate the correct green light combination in sumo
-        """
         if action_number == 0:
             traci.trafficlight.setPhase("TL", PHASE_NS_GREEN)
         elif action_number == 1:
@@ -155,58 +141,45 @@ class Simulation:
 
 
     def _get_per_lane_vehicles(self):
-        """
-        Retrieve the number of cars individually for every lane
-        """
-        per_lane_vehicles = []
-        for lane in self._incoming_lanes:
-            per_lane_vehicles.append(traci.lane.getLastStepVehicleNumber(lane))
-        return per_lane_vehicles
+        return [(traci.lane.getLastStepVehicleNumber(lane)) for lane in self._incoming_lanes]
+
+    def _get_normalized_per_lane_vehicles(self):
+        return [(traci.lane.getLastStepVehicleNumber(lane) / (self.lanes_length[lane] / (self.MIN_GAP + traci.lane.getLastStepLength(lane)))) for lane in self._incoming_lanes]
+
 
     def _get_per_lane_waiting_times(self):
-        """
-        Retrieve the number of cars individually for every lane
-        """
-        per_lane_waiting_times = []
-        for lane in self._incoming_lanes:
-            per_lane_waiting_times.append(traci.lane.getWaitingTime(lane))
-        return per_lane_waiting_times
+        return [(traci.lane.getWaitingTime(lane)) for lane in self._incoming_lanes]
+
+    def _get_normalized_per_lane_waiting_times(self):
+        return [(traci.lane.getWaitingTime(lane) / max(1, traci.lane.getLastStepVehicleNumber(lane))) for lane in self._incoming_lanes]
 
     def _get_queue_length(self):
-        """
-        Retrieve the number of cars with speed = 0 in every incoming lane
-        """
         return sum(traci.lane.getLastStepHaltingNumber(lane) for lane in self._incoming_lanes)
 
     def _get_per_lane_queue_lengths(self):
-        """
-        Retrieve the number of cars with speed = 0 individually for every lane
-        """
-        per_lane_queue_lengths = []
-        for lane in self._incoming_lanes:
-            per_lane_queue_lengths.append(traci.lane.getLastStepHaltingNumber(lane))
-        return per_lane_queue_lengths
+        return [traci.lane.getLastStepHaltingNumber(lane) for lane in self._incoming_lanes]
+
+    def _get_normalized_per_lane_queue_lengths(self):
+        return [(traci.lane.getLastStepHaltingNumber(lane) / (self.lanes_length[lane] / (self.MIN_GAP + traci.lane.getLastStepLength(lane)))) for lane in self._incoming_lanes]
+
+    def _get_average_speed_per_lane(self):
+        return [(traci.lane.getLastStepMeanSpeed(lane)) for lane in self._incoming_lanes]
+
+    def _get_normalized_average_speed_per_lane(self):
+        return [(traci.lane.getLastStepMeanSpeed(lane) / traci.lane.getMaxSpeed(lane)) for lane in self._incoming_lanes]
 
     def _get_average_speed(self):
-        avg_speed = 0.0
-        vehs = self._get_veh_list()
-        if len(vehs) == 0:
-            return 1.0
-        for v in vehs:
-            avg_speed += traci.vehicle.getSpeed(v) / traci.vehicle.getAllowedSpeed(v)
-        return avg_speed / len(vehs)
+        avg_speed_per_lane = self._get_average_speed_per_lane()
+        return sum(avg_speed_per_lane) / len(avg_speed_per_lane)
 
     def _get_pressure(self):
         return sum(traci.lane.getLastStepVehicleNumber(lane) for lane in self._outgoing_lanes) - sum(traci.lane.getLastStepVehicleNumber(lane) for lane in self._incoming_lanes)
 
     def _get_outgoing_lanes_density(self):
-        lanes_density = [traci.lane.getLastStepVehicleNumber(lane) for lane in self._outgoing_lanes]
-        return lanes_density
+        return [traci.lane.getLastStepVehicleNumber(lane) for lane in self._outgoing_lanes]
 
     def _get_incoming_lanes_density(self):
-        lanes_density = [traci.lane.getLastStepVehicleNumber(lane) for lane in self._incoming_lanes]
-        return lanes_density
-
+        return [traci.lane.getLastStepVehicleNumber(lane) for lane in self._incoming_lanes]
 
     # def _get_per_lane_waiting_times(self):
     #     """
@@ -250,13 +223,6 @@ class Simulation:
         
     #     return emergency_vehs
 
-    def _get_signal_phase(self, tl_id):
-        num_phases = traci.trafficlight.getAllProgramLogics(tl_id)[0].getPhases().__len__()
-        current_phase = traci.trafficlight.getPhase(tl_id)
-        one_hot_phase = [0] * num_phases
-        one_hot_phase[current_phase] = 1
-        return np.array(one_hot_phase)
-
     # def _emergency_vehicle_priority(self):
     #     emergency_vehicle_count = self._get_emergency_vehicle_count_per_lane()
     #     lane_to_activate = max(emergency_vehicle_count)
@@ -274,13 +240,24 @@ class Simulation:
     #     print(signal_phase_index)
     #     # print(lane_to_activate)
 
+    def _get_signal_phase(self, tl_id):
+        num_phases = traci.trafficlight.getAllProgramLogics(tl_id)[0].getPhases().__len__()
+        current_phase = traci.trafficlight.getPhase(tl_id)
+        one_hot_phase = [0] * num_phases
+        one_hot_phase[current_phase] = 1
+        return np.array(one_hot_phase)
 
     def _get_state(self):
         state = []
-        per_lane_queue_lengths = [x / 28 for x in self._get_per_lane_queue_lengths()]
-        per_lane_vehicles = [x / 28 for x in self._get_per_lane_vehicles()]
-        per_lane_waiting_times = [x / 28 for x in self._get_per_lane_waiting_times()]
+        # per_lane_queue_lengths = [x / 28 for x in self._get_per_lane_queue_lengths()]
+        # per_lane_vehicles = [x / 28 for x in self._get_per_lane_vehicles()]
+        # per_lane_waiting_times = [x / 28 for x in self._get_per_lane_waiting_times()]
         signal_phase = self._get_signal_phase(self.id)
+        per_lane_queue_lengths = self._get_normalized_per_lane_queue_lengths()
+        per_lane_vehicles = self._get_normalized_per_lane_vehicles()
+        per_lane_waiting_times = self._get_normalized_per_lane_waiting_times()
+
+        # signal_phase = [traci.trafficlight.getPhase(self.id)]
         # emergency_vehs = list(self._get_emergency_vehicle_count_per_lane().values())
         
         state.extend(signal_phase)
@@ -301,6 +278,7 @@ class Simulation:
         self._reward_store.append(self._sum_neg_reward)  # how much negative reward in this episode
         self._cumulative_wait_store.append(self._sum_waiting_time)  # total number of seconds waited by cars in this episode
         self._avg_queue_length_store.append(self._sum_queue_length / self._max_steps)  # average number of queued cars per step, in this episode
+        self._avg_speed_store.append(self._avg_speed / self._max_steps)
 
     @property
     def reward_store(self):
@@ -315,3 +293,9 @@ class Simulation:
     @property
     def avg_queue_length_store(self):
         return self._avg_queue_length_store
+
+
+    @property
+    def avg_speed_store(self):
+        return self._avg_speed_store
+    

@@ -7,5 +7,5 @@ files:
   additional_file: vehicles.add.vtype.xml
   trip_attributes: typedist1
 
-  model_to_test: 9
-  checkpoint_number: 330
+  model_to_test: 10
+  checkpoint_number: 395

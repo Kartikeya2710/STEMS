@@ -59,4 +59,5 @@ if __name__ == "__main__":
     copyfile(src=test_settings_path, dst=os.path.join(plot_path, 'test_settings.yaml'))
 
     Visualization.save_data_and_plot(data=Simulation.reward_episode, filename='reward', xlabel='Action step', ylabel='Reward')
-    Visualization.save_data_and_plot(data=Simulation.queue_length_episode, filename='queue', xlabel='Step', ylabel='Queue lenght (vehicles)')
+    Visualization.save_data_and_plot(data=Simulation.queue_length_episode, filename='queue', xlabel='Step', ylabel='Queue Length (vehicles)')
+    Visualization.save_data_and_plot(data=Simulation.avg_speed_store, filename='avg_speed', xlabel='Step', ylabel='Average Speed (m/s)')

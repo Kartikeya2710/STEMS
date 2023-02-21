@@ -1,15 +1,15 @@
 simulation:
     gui: False
-    total_episodes: 500
-    max_steps: 5400
-    n_cars_generated: 3000
+    total_episodes: 400
+    max_steps: 4000
+    n_cars_generated: 5000
     green_duration: 10
     yellow_duration: 4
     save_every: 5
 
 model:
     fc_dims: [400, 400, 400, 400]
-    batch_size: 32
+    batch_size: 64
     learning_rate: 0.001
     update_every: 500
 

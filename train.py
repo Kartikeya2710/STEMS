@@ -80,3 +80,4 @@ if __name__ == "__main__":
     Visualization.save_data_and_plot(data=Simulation.reward_store, filename='reward', xlabel='Episode', ylabel='Cumulative negative reward')
     Visualization.save_data_and_plot(data=Simulation.cumulative_wait_store, filename='delay', xlabel='Episode', ylabel='Cumulative delay (s)')
     Visualization.save_data_and_plot(data=Simulation.avg_queue_length_store, filename='queue', xlabel='Episode', ylabel='Average queue length (vehicles)')
+    Visualization.save_data_and_plot(data=Simulation.avg_speed_store, filename='avg_speed', xlabel='Episode', ylabel='Average speed (m/s)')

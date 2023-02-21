@@ -1,3 +1,5 @@
-/models/*
-/__pycache__
-!/models/DQN9/checkpoint_330.pt
+models/*
+!models/DQN10
+models/DQN10/*
+!models/DQN10/checkpoint_395.pt
+__pycache__/

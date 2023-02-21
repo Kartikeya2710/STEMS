@@ -10,7 +10,7 @@ class TrafficGenerator:
         self._route_file = os.path.join(dir_config['intersection_dir'], "episode_routes.rou.xml")
         self._additional_file = os.path.join(dir_config['intersection_dir'], dir_config['additional_file'])
         self._trips_file = os.path.join(dir_config['intersection_dir'], "trips.trips.xml")
-
+        
     def generate_routefile(self, seed):
         if 'SUMO_HOME' in os.environ:
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')

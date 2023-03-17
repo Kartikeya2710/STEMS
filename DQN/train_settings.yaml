@@ -4,7 +4,7 @@ simulation:
     max_steps: 4000
     n_cars_generated: 5000
     green_duration: 10
-    yellow_duration: 4
+    yellow_duration: 3
     save_every: 5
 
 model:

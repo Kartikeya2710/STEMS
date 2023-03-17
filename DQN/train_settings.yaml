@@ -14,7 +14,7 @@ model:
     update_every: 500
 
 memory:
-    capacity: 50000
+    capacity: 5000
 
 agent:
     num_states: 56

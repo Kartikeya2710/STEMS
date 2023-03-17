@@ -51,6 +51,7 @@ class Simulation:
         self._sum_queue_length = 0
         self._sum_waiting_time = 0
         self._old_total_wait = 0
+        self._old_queue_length = 0
         self._avg_speed = 0
 
         old_state = -1
@@ -60,6 +61,7 @@ class Simulation:
             
             current_state = self._get_state()
             current_total_wait = self._collect_waiting_times()
+            current_queue_length = self._get_queue_length()
             reward = self._get_reward()
 
             if self._step != 0:
@@ -80,6 +82,7 @@ class Simulation:
 
             old_state = current_state
             old_action = action
+            self._old_queue_length = current_queue_length
             self._old_total_wait = current_total_wait
 
             if reward < 0:
@@ -256,6 +259,7 @@ class Simulation:
         per_lane_queue_lengths = self._get_normalized_per_lane_queue_lengths()
         per_lane_vehicles = self._get_normalized_per_lane_vehicles()
         per_lane_waiting_times = self._get_normalized_per_lane_waiting_times()
+        # per_lane_avg_speed = self._get_normalized_average_speed_per_lane()
 
         # signal_phase = [traci.trafficlight.getPhase(self.id)]
         # emergency_vehs = list(self._get_emergency_vehicle_count_per_lane().values())
@@ -264,12 +268,15 @@ class Simulation:
         state.extend(per_lane_queue_lengths)
         state.extend(per_lane_vehicles)
         state.extend(per_lane_waiting_times)
+        # state.extend(per_lane_avg_speed)
 
         return np.array(state)
 
     def _get_reward(self):
         current_wait_time = self._collect_waiting_times()
         return self._old_total_wait - current_wait_time
+        # current_queue_length = self._get_queue_length()
+        # return self._old_queue_length - current_queue_length
 
     def _save_episode_stats(self):
         """

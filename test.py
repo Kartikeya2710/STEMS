@@ -5,7 +5,7 @@ import os
 from shutil import copyfile
 from DQN.testing_simulation import Simulation
 from helper.generator import TrafficGenerator
-from DQN.Agent import Agent
+from DQN.Agent import DuelingDoubleDQNAgent, DoubleDQNAgent
 from helper.visualization import Visualization
 from helper.utils import *
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     # Load the pretrained model
 
-    Model = Agent(
+    Model = DuelingDoubleDQNAgent(
         test_config['num_states'], 
         test_config['num_actions'],
         test_config['fc_dims']

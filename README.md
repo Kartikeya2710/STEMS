@@ -1,6 +1,15 @@
 ## Smart Traffic Engagement and Management System (STEMS)
 
-### Comparison with Traditional Traffic Light (TTL)
+<div class="video-container">
+    <h4>Traditional Traffic Lights (TTL)</h4>
+    <iframe width="500" height="281" src="https://user-images.githubusercontent.com/77334373/230928476-909b290a-c9a7-40f2-8f25-ab3e64651783.mp4" frameborder="0" allowfullscreen>
+    </iframe>
+    <h4>STEMS</h4>
+    <iframe width="500" height="281" src="https://user-images.githubusercontent.com/77334373/230958453-8dc0236c-b9cc-4c5c-9294-906e534fbf0f.mp4" frameborder="0" allowfullscreen>
+    </iframe>
+</div>
+
+### Plots
 
 #### Waiting Time Comparison
 <div>

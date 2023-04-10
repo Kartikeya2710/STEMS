@@ -2,14 +2,13 @@ import traci
 import numpy as np
 import timeit
 
-# phase codes based on environment.net.xml
-PHASE_NS_GREEN = 0  # action 0 code 00
+PHASE_NS_GREEN = 0
 PHASE_NS_YELLOW = 1
-PHASE_NSL_GREEN = 2  # action 1 code 01
+PHASE_NSL_GREEN = 2
 PHASE_NSL_YELLOW = 3
-PHASE_EW_GREEN = 4  # action 2 code 10
+PHASE_EW_GREEN = 4
 PHASE_EW_YELLOW = 5
-PHASE_EWL_GREEN = 6  # action 3 code 11
+PHASE_EWL_GREEN = 6
 PHASE_EWL_YELLOW = 7
 
 class Simulation:
@@ -27,11 +26,28 @@ class Simulation:
         self._reward_episode = []
         self._queue_length_episode = []
         self._avg_speed_store = []
-
+        self._wait_time_store = []
 
         # Set the model in evaluation mode
         self._Agent.policy_network.eval()
 
+    def test_ttl(self):
+        traci.start(self._sumo_cmd)
+        self.ttl_wait_times = []
+        self.ttl_queue_lengths = []
+        self.ttl_avg_speeds = []
+
+        for step in range(self._max_steps):
+            traci.simulationStep()
+            current_total_wait = self._collect_waiting_times()
+            current_queue_length = self._get_queue_length()
+            current_avg_speed = self._get_average_speed()
+            self.ttl_wait_times.append(current_total_wait)
+            self.ttl_queue_lengths.append(current_queue_length)
+            self.ttl_avg_speeds.append(current_avg_speed)
+
+        traci.close()
+        
 
     def run(self, episode):
         """
@@ -60,10 +76,7 @@ class Simulation:
         while self._step < self._max_steps:
 
             current_state = self._get_state()
-
             current_total_wait = self._collect_waiting_times()
-            current_queue_length = self._get_queue_length()
-            reward = self._get_reward()
 
             action = self._choose_action(current_state)
 
@@ -76,10 +89,8 @@ class Simulation:
 
             old_action = action
             self._old_total_wait = current_total_wait
-            self._avg_speed_store.append(self._get_average_speed())
-            self._reward_episode.append(reward)
+            
 
-        #print("Total reward:", np.sum(self._reward_episode))
         traci.close()
         simulation_time = round(timeit.default_timer() - start_time, 1)
 
@@ -99,6 +110,12 @@ class Simulation:
             steps_todo -= 1
             queue_length = self._get_queue_length() 
             self._queue_length_episode.append(queue_length)
+            avg_speed = self._get_average_speed()
+            self._avg_speed_store.append(avg_speed)
+            reward = self._get_reward()
+            self._reward_episode.append(reward)
+            wait_time = self._collect_waiting_times()
+            self._wait_time_store.append(wait_time)
 
 
     def _collect_waiting_times(self):
@@ -152,7 +169,6 @@ class Simulation:
 
     def _get_normalized_per_lane_vehicles(self):
         return [(traci.lane.getLastStepVehicleNumber(lane) / (self.lanes_length[lane] / (self.MIN_GAP + traci.lane.getLastStepLength(lane)))) for lane in self._incoming_lanes]
-
 
     def _get_per_lane_waiting_times(self):
         return [(traci.lane.getWaitingTime(lane)) for lane in self._incoming_lanes]
@@ -250,21 +266,25 @@ class Simulation:
         return np.array(state)
 
     def _get_reward(self):
-        # current_wait_time = self._collect_waiting_times()
+        
+        current_wait_time = self._collect_waiting_times()
         # return self._old_total_wait - current_wait_time
-        current_queue_length = self._get_queue_length()
-        return self._old_queue_length - current_queue_length
-
+        # current_queue_length = self._get_queue_length()
+        return (self._old_total_wait - current_wait_time)
+        # return (self._old_queue_length - current_queue_length)
+    
     @property
     def queue_length_episode(self):
         return self._queue_length_episode
 
-
     @property
     def reward_episode(self):
         return self._reward_episode
-        
 
     @property
     def avg_speed_store(self):
         return self._avg_speed_store
+    
+    @property
+    def wait_time_store(self):
+        return self._wait_time_store

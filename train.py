@@ -22,7 +22,7 @@ if __name__ == "__main__":
     sumo_cmd = set_sumo(train_config['gui'], dir_config['intersection_dir'], dir_config['sumocfg_file_name'], train_config['max_steps'])
     path = set_train_path(dir_config['agent_dir'], dir_config['models_path_name'])
 
-    Model = DuelingDoubleDQNAgent(
+    Model = DoubleDQNAgent(
         train_config['num_states'], 
         train_config['num_actions'],
         train_config['fc_dims'], 

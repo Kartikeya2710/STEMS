@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 
@@ -7,16 +8,18 @@ class Visualization:
             self._dpi = dpi
 
 
-    def save_data_and_plot(self, data, filename, xlabel, ylabel):
+    def save_data_and_plot(self, data, ttl_data, filename, xlabel, ylabel):
         """
         Produce a plot of performance of the agent over the session and save the relative data to txt
         """
-        min_val = min(data)
-        max_val = max(data)
+        min_val = min(min(data), min(ttl_data))
+        max_val = max(max(data), max(ttl_data))
 
         plt.rcParams.update({'font.size': 24})  # set bigger font size
-
-        plt.plot(data)
+        x = np.arange(len(data))
+        plt.plot(x, data, c='r', label='ours')
+        plt.plot(x, ttl_data, c='b', label='ttl')
+        plt.legend(loc="upper right")
         plt.ylabel(ylabel)
         plt.xlabel(xlabel)
         plt.margins(0)

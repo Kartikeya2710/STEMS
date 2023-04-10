@@ -274,9 +274,9 @@ class Simulation:
 
     def _get_reward(self):
         current_wait_time = self._collect_waiting_times()
-        return self._old_total_wait - current_wait_time
         # current_queue_length = self._get_queue_length()
-        # return self._old_queue_length - current_queue_length
+        return (self._old_total_wait - current_wait_time)
+        # return (self._old_queue_length - current_queue_length)
 
     def _save_episode_stats(self):
         """

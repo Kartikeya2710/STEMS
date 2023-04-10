@@ -9,6 +9,7 @@ from DQN.Agent import DuelingDoubleDQNAgent, DoubleDQNAgent
 from helper.visualization import Visualization
 from helper.utils import *
 
+
 if __name__ == "__main__":
     dir_config = load_config_file('dir_settings.yaml')
     test_settings_path = os.path.join(dir_config['agent_dir'], 'test_settings.yaml')
@@ -20,7 +21,7 @@ if __name__ == "__main__":
 
     # Load the pretrained model
 
-    Model = DuelingDoubleDQNAgent(
+    Model = DoubleDQNAgent(
         test_config['num_states'], 
         test_config['num_actions'],
         test_config['fc_dims']
@@ -58,6 +59,8 @@ if __name__ == "__main__":
 
     copyfile(src=test_settings_path, dst=os.path.join(plot_path, 'test_settings.yaml'))
 
-    Visualization.save_data_and_plot(data=Simulation.reward_episode, filename='reward', xlabel='Action step', ylabel='Reward')
-    Visualization.save_data_and_plot(data=Simulation.queue_length_episode, filename='queue', xlabel='Step', ylabel='Queue Length (vehicles)')
-    Visualization.save_data_and_plot(data=Simulation.avg_speed_store, filename='avg_speed', xlabel='Step', ylabel='Average Speed (m/s)')
+    Simulation.test_ttl()
+
+    Visualization.save_data_and_plot(data=Simulation.wait_time_store, ttl_data=Simulation.ttl_wait_times,filename='wait times', xlabel='Action step', ylabel='Wait Time')
+    Visualization.save_data_and_plot(data=Simulation.queue_length_episode, ttl_data=Simulation.ttl_queue_lengths, filename='queue', xlabel='Step', ylabel='Queue Length (vehicles)')
+    Visualization.save_data_and_plot(data=Simulation.avg_speed_store, ttl_data=Simulation.ttl_avg_speeds, filename='avg_speed', xlabel='Step', ylabel='Average Speed (m/s)')

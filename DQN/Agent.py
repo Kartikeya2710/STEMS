@@ -124,18 +124,12 @@ class DoubleDQNAgent(Agent):
         self.policy_network.train()
         self.target_network.eval()
         # Current state ki Q values
-        # print(f"States shape: {states.shape}")
         predicted_values = self.policy_network(states).gather(1,actions)
-        # print(f"Predicted values: {predicted_values.shape}")
         with torch.no_grad():
             next_state_actions = self.target_network(next_state).argmax(1).unsqueeze(1)
             next_state_labels = self.policy_network(next_state).gather(1, next_state_actions)
-        # print(f"next_state_labels: {next_state_labels.shape}")
         labels = rewards + self.gamma * next_state_labels
-        # print(f"rewards: {rewards.shape}")
 
-        # print(f"labels: {labels.shape}")
-        # print(f"predicted_values: {predicted_values}")
         loss = criterion(predicted_values, labels).to(self.device)
         self.optimizer.zero_grad()
         loss.backward()

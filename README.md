@@ -47,10 +47,10 @@ Change in cumulative waiting time of all vechicles between actions
 
 #### Action
 Choice of the traffic light phase from the 4 possible phases, described below. Every phase has a duration of 10 seconds. When the phase changes, a yellow phase of 3 seconds is activated
-* North-South Advance: green for lanes in the north and south arm dedicated to turning right or going straight
-* North-South Left Advance: green for lanes in the north and south arm dedicated to turning left
-* East-West Advance: green for lanes in the east and west arm dedicated to turning right or going straight
-* East-West Left Advance: green for lanes in the east and west arm dedicated to turning left
+* North-South Advance: green for lanes in the north and south arm dedicated to turning left or going straight
+* North-South Right Advance: green for lanes in the north and south arm dedicated to turning right
+* East-West Advance: green for lanes in the east and west arm dedicated to turning left or going straight
+* East-West Right Advance: green for lanes in the east and west arm dedicated to turning right
 
 ### Credits
 

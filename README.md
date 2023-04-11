@@ -1,13 +1,10 @@
 ## Smart Traffic Engagement and Management System (STEMS)
 
-<div class="video-container">
-    <h4>Traditional Traffic Lights (TTL)</h4>
-    <iframe width="500" height="281" src="https://user-images.githubusercontent.com/77334373/230928476-909b290a-c9a7-40f2-8f25-ab3e64651783.mp4" frameborder="0" allowfullscreen>
-    </iframe>
-    <h4>STEMS</h4>
-    <iframe width="500" height="281" src="https://user-images.githubusercontent.com/77334373/230958453-8dc0236c-b9cc-4c5c-9294-906e534fbf0f.mp4" frameborder="0" allowfullscreen>
-    </iframe>
-</div>
+### Traditional Traffic Lights (TTL)
+https://user-images.githubusercontent.com/77334373/230962388-fc437332-2d74-4190-a3ec-d79e2924b994.mp4   
+
+### STEMS
+https://user-images.githubusercontent.com/77334373/230962622-1507083c-b94a-4f9e-be7a-054b072c37d1.mp4
 
 ### Plots
 

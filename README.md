@@ -22,3 +22,36 @@ https://user-images.githubusercontent.com/77334373/230962622-1507083c-b94a-4f9e-
 <div>
     <img src="assets/plot_avg_speed.png" width=500>
 </div>
+
+### Environment
+* A 4x4 intersection with left-hand driving rule
+* Each arm is 500 meters long
+* Right-most lane dedicated to right-turn only
+* Left-most lane dedicated to left turn and straight
+* Two middle lanes dedicated to only going straight
+
+### Traffic Generation
+* `SUMO_HOME/tools/random_trips.py` is used to generate vehicle trips
+* The insertion times follow headway pattern of the [Poisson distribution](https://sumo.dlr.de/docs/Tools/Trip.html#insertion_distribution)
+
+### The Double Deep Q-Learning Agent
+
+#### State
+* The current signal phase (one-hot encoded)
+* Queue lengths per lane
+* Total number of vehicles per lane
+* Cumulative waiting time per lane
+
+#### Reward
+Change in cumulative waiting time of all vechicles between actions
+
+#### Action
+Choice of the traffic light phase from the 4 possible phases, described below. Every phase has a duration of 10 seconds. When the phase changes, a yellow phase of 3 seconds is activated
+* North-South Advance: green for lanes in the north and south arm dedicated to turning right or going straight
+* North-South Left Advance: green for lanes in the north and south arm dedicated to turning left
+* East-West Advance: green for lanes in the east and west arm dedicated to turning right or going straight
+* East-West Left Advance: green for lanes in the east and west arm dedicated to turning left
+
+### Credits
+
+AndreaVidali - [Deep Q-Learning Agent for Traffic Signal Control](https://github.com/AndreaVidali/Deep-QLearning-Agent-for-Traffic-Signal-Control)
